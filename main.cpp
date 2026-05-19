@@ -40,6 +40,7 @@ void menu() {
 
 // ADD STUDENT
 void addStudent() {
+
     Student s;
 
     cout << "\nEnter Student ID: ";
@@ -59,6 +60,8 @@ void addStudent() {
     getline(cin, s.course);
 
     students.push_back(s);
+
+    saveToFile();
 
     cout << "\nStudent Added Successfully!\n";
 }
@@ -170,6 +173,7 @@ void deleteStudent() {
 }
 
 
+
 // SAVE DATA TO FILE
 void saveToFile() {
 
@@ -215,8 +219,6 @@ void loadFromFile() {
 
     file.close();
 }
-
-
 // MAIN FUNCTION
 int main() {
 
