@@ -26,8 +26,9 @@ void saveToFile();
 void loadFromFile();
 
 
-// MENU
+// MENU FUNCTION
 void menu() {
+
     cout << "\n===== STUDENT MANAGEMENT SYSTEM =====\n";
     cout << "1. Add Student\n";
     cout << "2. View Students\n";
@@ -46,7 +47,7 @@ void addStudent() {
     cout << "\nEnter Student ID: ";
     cin >> s.id;
 
-    cin.ignore();
+    cin.ignore(1000, '\n');
 
     cout << "Enter Name: ";
     getline(cin, s.name);
@@ -54,7 +55,7 @@ void addStudent() {
     cout << "Enter Age: ";
     cin >> s.age;
 
-    cin.ignore();
+    cin.ignore(1000, '\n');
 
     cout << "Enter Course: ";
     getline(cin, s.course);
@@ -70,14 +71,15 @@ void addStudent() {
 // VIEW STUDENTS
 void viewStudents() {
 
-    if (students.empty()) {
+    if(students.empty()) {
+
         cout << "\nNo Student Records Found!\n";
         return;
     }
 
     cout << "\n===== STUDENT RECORDS =====\n";
 
-    for (auto s : students) {
+    for(auto s : students) {
 
         cout << "\nID     : " << s.id;
         cout << "\nName   : " << s.name;
@@ -95,9 +97,9 @@ void searchStudent() {
     cout << "\nEnter Student ID to Search: ";
     cin >> id;
 
-    for (auto s : students) {
+    for(auto s : students) {
 
-        if (s.id == id) {
+        if(s.id == id) {
 
             cout << "\nStudent Found!\n";
 
@@ -122,11 +124,11 @@ void updateStudent() {
     cout << "\nEnter Student ID to Update: ";
     cin >> id;
 
-    for (auto &s : students) {
+    for(auto &s : students) {
 
-        if (s.id == id) {
+        if(s.id == id) {
 
-            cin.ignore();
+            cin.ignore(1000, '\n');
 
             cout << "Enter New Name: ";
             getline(cin, s.name);
@@ -134,10 +136,12 @@ void updateStudent() {
             cout << "Enter New Age: ";
             cin >> s.age;
 
-            cin.ignore();
+            cin.ignore(1000, '\n');
 
             cout << "Enter New Course: ";
             getline(cin, s.course);
+
+            saveToFile();
 
             cout << "\nStudent Updated Successfully!\n";
 
@@ -157,11 +161,13 @@ void deleteStudent() {
     cout << "\nEnter Student ID to Delete: ";
     cin >> id;
 
-    for (int i = 0; i < students.size(); i++) {
+    for(int i = 0; i < students.size(); i++) {
 
-        if (students[i].id == id) {
+        if(students[i].id == id) {
 
             students.erase(students.begin() + i);
+
+            saveToFile();
 
             cout << "\nStudent Deleted Successfully!\n";
 
@@ -173,13 +179,12 @@ void deleteStudent() {
 }
 
 
-
-// SAVE DATA TO FILE
+// SAVE TO FILE
 void saveToFile() {
 
-    ofstream file("students.txt");
+    ofstream file("student.txt");
 
-    for (auto s : students) {
+    for(auto s : students) {
 
         file << s.id << ","
              << s.name << ","
@@ -191,14 +196,19 @@ void saveToFile() {
 }
 
 
-// LOAD DATA FROM FILE
+// LOAD FROM FILE
 void loadFromFile() {
 
     ifstream file("students.txt");
 
     string line;
 
-    while (getline(file, line)) {
+    while(getline(file, line)) {
+
+        // Skip empty lines
+        if(line.empty()) {
+            continue;
+        }
 
         stringstream ss(line);
 
@@ -211,14 +221,23 @@ void loadFromFile() {
         getline(ss, age, ',');
         getline(ss, s.course, ',');
 
-        s.id = stoi(id);
-        s.age = stoi(age);
+        try {
 
-        students.push_back(s);
+            s.id = stoi(id);
+            s.age = stoi(age);
+
+            students.push_back(s);
+
+        } catch(...) {
+
+            cout << "\nInvalid data found in file!\n";
+        }
     }
 
     file.close();
 }
+
+
 // MAIN FUNCTION
 int main() {
 
@@ -231,7 +250,19 @@ int main() {
         menu();
 
         cout << "\nEnter Your Choice: ";
+
         cin >> choice;
+
+        // Handle invalid input
+        if(cin.fail()) {
+
+            cin.clear();
+            cin.ignore(1000, '\n');
+
+            cout << "\nInvalid Input! Enter numbers only.\n";
+
+            continue;
+        }
 
         switch(choice) {
 
@@ -257,8 +288,9 @@ int main() {
 
             case 6:
                 saveToFile();
-                cout << "\nData Saved Successfully!";
-                cout << "\nExiting Program...\n";
+
+                cout << "\nData Saved Successfully!\n";
+                cout << "Exiting Program...\n";
                 break;
 
             default:
