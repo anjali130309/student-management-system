@@ -1,3 +1,4 @@
 1,nia,20,english
-2,nisha,17,science
+2,avi,16,eng
 3,ayesha,21,eng
+5,palak,20,biotech 
